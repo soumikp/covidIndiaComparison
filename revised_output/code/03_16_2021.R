@@ -15,7 +15,8 @@ baseline <-  baseline %>% select(-contains("observed"))
 seirFansy <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/SEIRfansy_revision/Projections_India.csv") %>%
   filter(date > "2020-10-15" & date <= "2020-12-31")
 
-seirFansy.death <- seirFansy %>% select(contains(c("date", "Deceased")))
+seirFansy.deaths <- seirFansy %>% select(contains(c("date", "Deceased")))
+seirFansy.cases <- seirFansy %>% select(-contains(c("Deceased")))
 
 ##SAPHIRE
 saphire <- read_delim("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/SAPHIRE_revision/SAPHIRE_reported_unreported_cases_of_india.txt",
