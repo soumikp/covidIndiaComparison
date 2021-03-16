@@ -26,50 +26,77 @@ x <- dat %>%
   mutate(t = (seq_along(date)-3)) %>% 
   drop_na()
 
-
 model <- lm(log(l) ~ t, 
-             data = x %>% 
-               filter(date<="2020-10-15"))
+            data = x %>% 
+              filter(date<="2020-10-15"))
 
+predict <- predict.lm(model,
+                      newdata = x %>% filter(date>"2020-10-15", date <= "2020-12-31"), 
+                      interval = "confidence")
 
-predicted <- 1/((1-2*exp(predict.lm(model, 
-                                    newdata = x %>% 
-                                      filter(date>"2020-10-15") %>% 
-                                      filter(date<="2020-12-31"))))/x %>% 
-                  filter(date>"2020-10-15") %>% filter(date<="2020-12-31") %>% pull(cases))
+start.0 <- x %>% filter(date == "2020-10-14") %>% pull(cases)
+start.1 <- x %>% filter(date == "2020-10-15") %>% pull(cases)
 
-observed <- x %>% filter(date>"2020-10-15") %>% filter(date<="2020-12-31") %>% select(date, cases)
+new.point <- c(start.0/(1 - 2*exp(predict[1,1])), start.1/(1 - 2*exp(predict[1,1])))
+new.low <- c(start.0/(1 - 2*exp(predict[1,2])), start.1/(1 - 2*exp(predict[1,2])))
+new.high <- c(start.0/(1 - 2*exp(predict[1,3])), start.1/(1 - 2*exp(predict[1,3])))
 
+for(i in 3:77){
+  new.point <- c(new.point, 
+                 new.point[i-2]/(1 - 2*exp(predict[i,1])))
+  
+  new.low <- c(new.low, 
+               new.low[i-2]/(1 - 2*exp(predict[i,2])))
+  
+  new.high <- c(new.high, 
+                new.high[i-2]/(1 - 2*exp(predict[i,3])))
+  
+}
 
-observed <- observed %>% add_column(predicted_cases = as.numeric(predicted))
+baseline.data <- x %>% 
+  filter(date >= "2020-10-16" & date <= "2020-12-31") %>% 
+  select(date, cases) %>% 
+  rename(observed = cases) %>% 
+  add_column(predicted.point = new.point,
+             predicted.low = new.low, 
+             predicted.high = new.high) %>% 
+  mutate(date = lubridate::as_datetime(date))
 
+write_csv(baseline.data, "/Users/soumikp/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/Baseline_revision/baseline.csv")
 
-write.table(observed, "baseline.txt")
-
-data <- as_tibble(read.table("~/Box/COVID India Comparisons/Results/India/Codes/estimate_and_prediction_of_india_2.txt",
-                             header = TRUE))
-
-data <- data %>% 
-  mutate(Date = as.POSIXct(Date)) %>% 
-  filter(Date > "2020-06-18", Date <="2020-07-18")
-
-mean(((predicted - observed)^2)/((data %>% pull(I) - observed)^2))
-
-
-plot(x = predicted, 
-     y = data %>% pull(I))
-
-ggplot(data = x %>% 
-         filter(date<="2020-07-18"),
-       aes(x = t, 
-           y = log(l))) + 
-  geom_point() + 
-  stat_smooth(method = "lm") + 
-  stat_smooth(method = "smooth")
-
-
-ggplot(data) + 
-  geom_point(aes(x = t, y = l)) + 
-  geom_smooth(stat = "smooth")
-
-
+# data <- as_tibble(read.table("~/Box/COVID India Comparisons/Results/India/Codes/estimate_and_prediction_of_india_2.txt",
+#                              header = TRUE))
+# 
+# data <- data %>% 
+#   mutate(Date = as.POSIXct(Date)) %>% 
+#   filter(Date > "2020-06-18", Date <="2020-07-18")
+# require(plotly)
+# ggplotly(baseline.data %>% 
+#            pivot_longer(cols = -date) %>% 
+#            ggplot(aes(x = date, y = value, group = name, color = name)) + 
+#            geom_line() + 
+#            geom_point())
+    
+  
+  
+# 
+# mean(((predicted - observed)^2)/((data %>% pull(I) - observed)^2))
+# 
+# 
+# plot(x = predicted, 
+#      y = data %>% pull(I))
+# 
+# ggplot(data = x %>% 
+#          filter(date<="2020-07-18"),
+#        aes(x = t, 
+#            y = log(l))) + 
+#   geom_point() + 
+#   stat_smooth(method = "lm") + 
+#   stat_smooth(method = "smooth")
+# 
+# 
+# ggplot(data) + 
+#   geom_point(aes(x = t, y = l)) + 
+#   geom_smooth(stat = "smooth")
+# 
+# 
