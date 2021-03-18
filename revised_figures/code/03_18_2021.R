@@ -3,6 +3,8 @@ require(lubridate)
 require(ggsci)
 require(glue)
 require(latex2exp)
+require(cowplot)
+require(ggridges)
 
 address <- "~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/clean_revision/"
 save.address <- "/Users/soumikp/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_figures/"
@@ -85,9 +87,9 @@ ggsave(paste0(save.address, "arc.pdf"),
 
 #### figure for cumulative reported cases ####
 crc.estim <- full_join(full_join(full_join(full_join(obs %>% select(date, total.case),
-                                 bl %>% select(date, bl.crc.estim)),
-                       es %>% select(date, esir.crc.estim)),
-                       sp %>% select(date, sap.crc.estim)), 
+                                                     bl %>% select(date, bl.crc.estim)),
+                                           es %>% select(date, esir.crc.estim)),
+                                 sp %>% select(date, sap.crc.estim)), 
                        sf %>% select(date, seirf.crc.estim))
 crc.estim %>% 
   pivot_longer(cols = -date) %>% 
@@ -146,8 +148,8 @@ ggsave(paste0(save.address, "crc.pdf"),
 
 #### figure for cumulative reported deaths ####
 crd.estim <- full_join(full_join(obs %>% select(date, total.death),
-                                                     es %>% select(date, esir.crd.estim)),
-                                 sf %>% select(date, seirf.crd.estim))
+                                 es %>% select(date, esir.crd.estim)),
+                       sf %>% select(date, seirf.crd.estim))
 crd <- crd.estim %>% 
   pivot_longer(cols = -date) %>% 
   mutate(date = as_date(date)) %>% 
@@ -204,10 +206,76 @@ ggsave(paste0(save.address, "crd.pdf"),
 
 
 
+#### scatter and density for active reported ####
+scatter <- arc.estim %>% 
+  pivot_longer(cols = -c(date, active.case)) %>% 
+  mutate(date = as_date(date)) %>% 
+  mutate(name = ifelse(name == "esir.arc.estim", "eSIR", "SEIR-fansy")) %>% 
+  rename(Observed = active.case, 
+         Projected = value) %>% 
+  mutate(Observed = Observed/100000, 
+         Projected = Projected/100000) %>% 
+  ggplot(aes(x = Observed, y = Projected, color = name)) + 
+  geom_point() + 
+  scale_color_nejm() +
+  xlab(TeX("Observed cases $\\left( \\times 10^6 \\right)$")) + 
+  ylab(TeX("Projected cases $\\left( \\times 10^6 \\right)$")) + 
+  theme_bw() + 
+  labs(color = "Model")
 
+density <- arc.estim %>% 
+  pivot_longer(cols = -c(date)) %>% 
+  mutate(date = as_date(date)) %>% 
+  mutate(name = ifelse(name == "esir.arc.estim", "eSIR",
+                       ifelse(name == "active.case", "Observed", "SEIR-fansy"))) %>% 
+  rename(Model= name, 
+         Cases = value) %>% 
+  mutate(Cases = Cases/100000) %>% 
+  ggplot(aes(x = Cases, y = Model, fill = Model, height = ..density..)) + 
+  geom_density_ridges(alpha = 0.75) + 
+  scale_fill_nejm() +
+  xlab(TeX("Cases $\\left( \\times 10^6 \\right)$")) + 
+  theme_bw()
 
+arc.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,  
+                                  legend = "bottom")  +
+  labs(title = "Densities (L) and scatterplot (R) of projected and observed active reported cases from October 16 to December 31, 2020.",
+       subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+                       "Supplementary Table S1 describes parameter values used to generate these projections in detail."
+       ),
+       color = "Model",
+       caption  = glue(
+         #"**\uA9 COV-IND-19 Study Group**<br>",
+         "**Data Source:** covid19india.org<br>",
+         "**Note:**<br>",
+         " - We do not include projections from the baseline and SAPHIRE models as they do not yield active case counts.<br>",
+         " - We do not include projections from the ICM model it yields only total (reported + unreported) case counts."
+       )
+  ) +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1),
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 14),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
 
-
-
-
+ggsave(paste0(save.address, "arcScatDens.pdf"), 
+       plot = arc.scatDens,
+       device = cairo_pdf(), 
+       width = 16, 
+       height = 2*16/3, 
+       units = "in", 
+       dpi = 300)
+dev.off()
 
