@@ -173,16 +173,16 @@ saphire <- read_delim("~/Box/COVID India Comparisons/Revisions/covidIndiaCompari
   filter(date >= "2020-10-15" & date <= "2020-12-31")
 
 ##ICM still waiting to hear back from Dr. Mishra on CI for cumulative cases.
-icm <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/ICM_revision/india_results_ifr_0_04.csv") %>% 
+icm <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/ICM_revision/india_results_ifr_0_04_totals.csv") %>% 
   mutate(date = as_datetime(as.Date(date, format = "%d/%m/%y"))) %>% 
-  rename(icm.atc.estim = "Infections Mean", 
-         icm.atc.low = "LowerCI Infections", 
-         icm.atc.high = "UpperCI Infections", 
+  rename(icm.ctc.estim = "Total Infections Mean", 
+         icm.ctc.low = "Total LowerCI Infections", 
+         icm.ctc.high = "Total UpperCI Infections", 
          
-         icm.atd.estim = "ExpDeaths Mean", 
-         icm.atd.low = "LowerCI ExpDeaths", 
-         icm.atd.high = "UpperCI ExpDeaths") %>%
+         icm.ctd.estim = "Total ExpDeaths Mean", 
+         icm.ctd.low = "Total LowerCI ExpDeaths", 
+         icm.ctd.high = "Total UpperCI ExpDeaths") %>%
   select(contains(c("date", "icm."))) %>% 
-  mutate(icm.atc.width = icm.atc.high - icm.atc.low, 
-         icm.atd.width = icm.atd.high - icm.atd.low) %>% 
-  mutate(icm.ctc.estim = cumsum(icm.atc.estim)) %>% select(icm.atc.estim, icm.ctc.estim)
+  mutate(icm.ctc.width = icm.ctc.high - icm.ctc.low, 
+         icm.ctd.width = icm.ctd.high - icm.ctd.low) %>% 
+  filter(date >= "2020-10-15" & date <= "2020-12-31")
