@@ -1,6 +1,6 @@
 ## to collect data and generate tables, plots. 
-
 require(tidyverse)
+require(lubridate)
 
 #observed counts
 Observed = read.csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/code/case_time_series.csv")
@@ -75,38 +75,114 @@ observed.test <- observed %>%
 
 write_csv(observed, "observed.csv")
 
+# nomenclature: 
+## ARC = active, reported, case
+## AUC = active, unreported, case
+## ATC = active, total, case
+## CRC = cumulative, reported, case ...and so on. 
+## CRD = cumulative, reported, death
+
 
 #baseline done
 baseline <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/Baseline_revision/baseline.csv")
-baseline <-  baseline %>% select(-contains("observed"))
+baseline <-  baseline %>% select(-contains("observed")) %>% 
+  rename(bl.crc.estim = predicted.point, 
+         bl.crc.low = predicted.low, 
+         bl.crc.high = predicted.high) %>% 
+  mutate(bl.crc.width = bl.crc.high - bl.crc.low)
 
-## eSIR still waiting for Rupam da's input
+## eSIR done
+esir <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/eSIR_revision/eSIR Results.csv") %>% 
+  mutate(date = as_datetime(forecast_dt), 
+         esir.arc.estim = India_active, 
+         esir.arc.low = India_active_low, 
+         esir.arc.high = India_active_up, 
+         esir.crc.estim = India_confirm, 
+         esir.crc.low = India_confirm_low, 
+         esir.crc.high = India_confirm_up, 
+         esir.crd.estim = India_death, 
+         esir.crd.low = India_death_low, 
+         esir.crd.high = India_death_up) %>% 
+  select(contains(c("date", "esir."))) %>% 
+  mutate(esir.arc.width = esir.arc.high - esir.arc.low, 
+         esir.crc.width = esir.crc.high - esir.crc.low, 
+         esir.crd.width = esir.crd.high - esir.crd.low)
+  
 
-
-## FANSY still waiting for the kids to call
+## FANSY done
 seirFansy <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/SEIRfansy_revision/Projections_India.csv") %>%
-  filter(date > "2020-10-15" & date <= "2020-12-31")
+  filter(date > "2020-10-15" & date <= "2020-12-31") %>% 
+  mutate(date = as_datetime(date), 
+         seirf.arc.estim = Current_Reported_Infected_Mean, 
+         seirf.arc.low = Current_Reported_Infected_Lower_CI, 
+         seirf.arc.high = Current_Reported_Infected_Upper_CI, 
+         seirf.auc.estim = Current_Unreported_Infected_Mean, 
+         seirf.auc.low = Current_Unreported_Infected_Lower_CI, 
+         seirf.auc.high = Current_Unreported_Infected_Upper_CI, 
+         seirf.atc.estim = Total_Current_Cases_Mean, 
+         seirf.atc.low = Total_Current_Cases_Lower_CI, 
+         seirf.atc.high = Total_Current_Cases_Upper_CI, 
+         
+         seirf.crc.estim = Cum_Reported_Cases_Mean, 
+         seirf.crc.low = Cum_Reported_Cases_Lower_CI, 
+         seirf.crc.high = Cum_Reported_Cases_Upper_CI, 
+         seirf.cuc.estim = Cum_Unreported_Cases_Mean, 
+         seirf.cuc.low = Cum_Unreported_Cases_Lower_CI, 
+         seirf.cuc.high = Cum_Unreported_Cases_Upper_CI, 
+         seirf.ctc.estim = Total_Cum_Cases_Mean, 
+         seirf.ctc.low = Total_Cum_Cases_Lower_CI, 
+         seirf.ctc.high = Total_Cum_Cases_Upper_CI, 
+         
+         seirf.crd.estim = Total_Reported_Deceased_Mean, 
+         seirf.crd.low = Total_Reported_Deceased_Lower_CI, 
+         seirf.crd.high = Total_Reported_Deceased_Upper_CI, 
+         seirf.cud.estim = Total_Unreported_Deceased_Mean, 
+         seirf.cud.low = Total_Unreported_Deceased_Lower_CI, 
+         seirf.cud.high = Total_Unreported_Deceased_Upper_CI, 
+         seirf.ctd.estim = Total_Deceased_Mean, 
+         seirf.ctd.low = Total_Deceased_Lower_CI, 
+         seirf.ctd.high = Total_Deceased_Upper_CI) %>% 
+  select(contains(c("date", "seirf"))) %>% 
+  mutate(seirf.arc.width = seirf.arc.high - seirf.arc.low,
+         seirf.auc.width = seirf.auc.high - seirf.auc.low, 
+         seirf.atc.width = seirf.atc.high - seirf.atc.low, 
+         
+         seirf.crc.width = seirf.crc.high - seirf.crc.low,
+         seirf.cuc.width = seirf.cuc.high - seirf.cuc.low, 
+         seirf.ctc.width = seirf.ctc.high - seirf.ctc.low, 
+         
+         seirf.crd.width = seirf.crd.high - seirf.crd.low,
+         seirf.cud.width = seirf.cud.high - seirf.cud.low, 
+         seirf.ctd.width = seirf.ctd.high - seirf.ctd.low)
 
-seirFansy.deaths <- seirFansy %>% select(contains(c("date", "Deceased")))
-seirFansy.cases <- seirFansy %>% select(-contains(c("Deceased")))
+##SAPHIRE done
+saphire <- read_delim("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/SAPHIRE_revision/SAPHIRE_estimates_and_prediction.txt", 
+                      delim = "\t") %>% 
+  mutate(date = as_datetime(Date)) %>% 
+  select(-Date) %>% 
+  mutate(sap.crc.estim = cumulative_reported, 
+         sap.crc.low = cumulative_reported_lower, 
+         sap.crc.high = cumulative_reported_upper,
+         sap.cuc.estim = cumulative_unreported, 
+         sap.cuc.low = cumulative_unreported_lower, 
+         sap.cuc.high = cumulative_unreported_upper,
+         sap.ctc.estim = cumulative_total, 
+         sap.ctc.low = cumulative_total_lower, 
+         sap.ctc.high = cumulative_total_upper) %>% 
+  select(contains(c("date", "sap"))) %>% 
+  filter(date >= "2020-10-15" & date <= "2020-12-31")
 
-##SAPHIRE
-saphire <- read_delim("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/SAPHIRE_revision/SAPHIRE_reported_unreported_cases_of_india.txt",
-           delim = "\t") %>%
-  rename(Date = "a1$Date") %>%
-  filter(Date >= "2020-10-15") %>%
-  rename(cumulative_reported_cases) %>%
-  select(Date, predicted.total)
-
-saphire <- saphire %>%
-  add_column(predicted.active = c(NA, diff(saphire$predicted.total))) %>%
-  drop_na()
-
-saphire.ci <- read.table("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/SAPHIRE_revision/SAPHIRE_estimates_and_prediction.txt")
-names(saphire.ci) <- saphire.ci[1,]
-saphire.ci <- saphire.ci[,!names(saphire.ci) == "time"]
-saphire.ci <- as_tibble(saphire.ci[-1,])
-saphire.ci %>% filter(Date == "2020-10-16") %>% select(S, E, P, I, A, H, R)
-
-##ICM
-icm <- read_
+##ICM still waiting to hear back from Dr. Mishra on CI for cumulative cases.
+icm <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/ICM_revision/india_results_ifr_0_04.csv") %>% 
+  mutate(date = as_datetime(as.Date(date, format = "%d/%m/%y"))) %>% 
+  rename(icm.atc.estim = "Infections Mean", 
+         icm.atc.low = "LowerCI Infections", 
+         icm.atc.high = "UpperCI Infections", 
+         
+         icm.atd.estim = "ExpDeaths Mean", 
+         icm.atd.low = "LowerCI ExpDeaths", 
+         icm.atd.high = "UpperCI ExpDeaths") %>%
+  select(contains(c("date", "icm."))) %>% 
+  mutate(icm.atc.width = icm.atc.high - icm.atc.low, 
+         icm.atd.width = icm.atd.high - icm.atd.low) %>% 
+  mutate(icm.ctc.estim = cumsum(icm.atc.estim)) %>% select(icm.atc.estim, icm.ctc.estim)
