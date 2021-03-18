@@ -186,3 +186,16 @@ icm <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/re
   mutate(icm.ctc.width = icm.ctc.high - icm.ctc.low, 
          icm.ctd.width = icm.ctd.high - icm.ctd.low) %>% 
   filter(date >= "2020-10-15" & date <= "2020-12-31")
+
+
+##write files and gtfo
+write_csv(baseline, 
+          "~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/clean_revision/baseline.csv")
+write_csv(esir,
+          "~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/clean_revision/esir.csv")
+write_csv(saphire,
+          "~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/clean_revision/saphire.csv")
+write_csv(seirFansy,
+          "~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/clean_revision/seirfansy.csv")
+write_csv(icm,
+          "~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/revised_output/clean_revision/icm.csv")
