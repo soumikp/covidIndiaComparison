@@ -186,6 +186,26 @@ icm <- read_csv("~/Box/COVID India Comparisons/Revisions/covidIndiaComparison/re
   mutate(icm.ctc.width = icm.ctc.high - icm.ctc.low, 
          icm.ctd.width = icm.ctd.high - icm.ctd.low) %>% 
   filter(date >= "2020-10-15" & date <= "2020-12-31")
+## for mean R(T) and CI##
+read_csv("revised_output/ICM_revision/india_results_ifr_0_04.csv") %>% 
+  select(date, `Rt Mean`) %>% 
+  mutate(date = as_datetime(as.Date(date, format = "%d/%m/%y"))) %>% 
+  rename(r = `Rt Mean`) %>% 
+  filter(date <= "2020-10-15") %>% 
+  mutate(group = ifelse(date <= "2020-04-14", 1, 
+                        ifelse(date <= "2020-05-03", 2, 
+                               ifelse(date <= "2020-05-17", 3, 
+                                      ifelse(date <= "2020-05-31", 4,
+                                             ifelse(date <= "2020-06-30", 5,
+                                                    ifelse(date <= "2020-07-31", 6,
+                                                           ifelse(date <= "2020-08-31", 7,
+                                                                  ifelse(date <= "2020-09-30", 8, 9))))))))) %>% 
+  group_by(group) %>% 
+  summarise(m = mean(r, na.rm = T), 
+            s = sd(r, na.rm = T)/sqrt(n())) %>%   
+  summarise(m = m, 
+            l = m - qnorm(0.975)*s, 
+            u = m + qnorm(0.975)*s)
 
 
 ##write files and gtfo
