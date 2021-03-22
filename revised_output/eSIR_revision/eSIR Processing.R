@@ -38,7 +38,7 @@ colnames(Observed_Data) = c("Date", "Total_Confirmed", "Total_Recovered", "Total
 Observed_Data$Active_Confirmed = Observed_Data$Total_Confirmed - Observed_Data$Total_Recovered -
   Observed_Data$Total_Death
 
-load(paste0("eSIR Outputs/",
+load(paste0("revised_output/eSIR_revision/eSIR Outputs/",
             casename,
             "_plot_data.Rdata"))
 
@@ -151,7 +151,7 @@ dataf = Observed_Data$Total_Death
 if (adj == T) {
   adj_v =
     mean(as.vector(dataf[(T_prime - adj_len):T_prime]) / (death_in_R * N) / (data_comp_R[(T_prime -
-                                                                             adj_len):T_prime, "mean"]))
+                                                                                            adj_len):T_prime, "mean"]))
   India_death = round(India_death * adj_v)
   India_death_up = round(India_death_up * adj_v)
   India_death_low = round(India_death_low * adj_v)
@@ -171,5 +171,5 @@ Results = data.frame(
 )
 
 write.csv(x = Results,
-          file = "eSIR Results.csv",
+          file = "revised_output/eSIR_revision/eSIR Results.csv",
           row.names = FALSE)

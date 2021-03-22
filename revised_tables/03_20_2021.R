@@ -5,6 +5,8 @@ obs <- read_csv("revised_output/clean_revision/observed.csv") %>%
   filter(Date >= "2020-10-15")
 bl <- read_csv("revised_output/clean_revision/baseline.csv") %>% 
   filter(date >= "2020-10-15")
+es <- read_csv("revised_output/clean_revision/esir.csv") %>% 
+  filter(date >= "2020-10-15")
 sp <- read_csv("revised_output/clean_revision/saphire.csv") %>% 
   filter(date >= "2020-10-15")
 sf <- read_csv("revised_output/clean_revision/seirfansy.csv") %>% 
