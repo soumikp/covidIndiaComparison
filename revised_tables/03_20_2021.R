@@ -19,14 +19,43 @@ metrics<- function(data, ref){
     sqrt(mean((1 - data/ref)^2))), 3)
 }
 
+# ## table 1 - epiestim based R(T) for eSIR
+# es %>% 
+#   select(date, esir.crc.estim) %>% 
+#   rename(cases = esir.crc.estim)
+
 
 ### table 2
 metrics(bl$bl.crc.estim, obs$total.case) #only total for BL
+
+metrics(es$esir.arc.estim, obs$active.case) #ll three for esir
+metrics(es$esir.crc.estim, obs$total.case)
+metrics(es$esir.crd.estim, obs$total.death)
 
 metrics(sp$sap.crc.estim, obs$total.case) #only total for SAPHIRE
 
 metrics(sf$seirf.arc.estim, obs$active.case) #ll three for SEIRF
 metrics(sf$seirf.crc.estim, obs$total.case)
 metrics(sf$seirf.crd.estim, obs$total.death)
-
 ##nothing for ICM
+
+
+## table 3 
+metrics2 <- function(obs, ref, data){
+  round(unlist(c(sqrt(mean(((ref - obs)/(data - obs))^2)), 
+          cor(obs, data), 
+          epiR::epi.ccc(obs, data)$rho.c[1])), 3)
+  
+}
+
+metrics2(obs$total.case, bl$bl.crc.estim, bl$bl.crc.estim)
+metrics2(obs$total.case, bl$bl.crc.estim, es$esir.crc.estim)
+metrics2(obs$total.case, bl$bl.crc.estim, sp$sap.crc.estim)
+metrics2(obs$total.case, bl$bl.crc.estim, sf$seirf.crc.estim)
+
+metrics2(obs$total.death, es$esir.crd.estim, es$esir.crd.estim)
+metrics2(obs$total.death, es$esir.crd.estim, sf$seirf.crd.estim)
+
+
+
+

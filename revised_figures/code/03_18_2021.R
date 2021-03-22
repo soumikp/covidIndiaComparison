@@ -82,6 +82,7 @@ ggsave(paste0(save.address, "arc.pdf"),
        height = 2*16/3, 
        units = "in", 
        dpi = 300)
+dev.off()
 
 
 
@@ -201,7 +202,7 @@ ggsave(paste0(save.address, "crd.pdf"),
        height = 2*16/3, 
        units = "in", 
        dpi = 300)
-
+dev.off()
 
 
 
