@@ -443,3 +443,362 @@ ggsave(paste0(save.address, "crdcScatDens.pdf"),
        units = "in", 
        dpi = 300)
 dev.off()
+
+
+
+
+
+
+
+
+arc <- es %>% 
+  select(date, esir.arc.width) %>% 
+  add_column(sf %>% 
+               mutate(seirf.arc.width = seirf.arc.high - seirf.arc.low) %>% 
+               select(seirf.arc.width)) %>% 
+  rename(eSIR = esir.arc.width, 
+         `SEIR-fansy` = seirf.arc.width) %>% 
+  pivot_longer(cols = -date) %>% 
+  ggplot(aes(x = value/(10^6), y = name)) + 
+  geom_boxplot(aes(fill = name)) + 
+  ggsci::scale_fill_nejm() +
+  xlab(TeX("Width of confidence interval for active case projections $\\left(\\times 10^6 \\right)$")) + 
+  ylab(TeX("Model")) + 
+  labs(
+    title    = "Boxplots showing width of confidence interval associated with projected active cases from October 16 to December 31, 2020.",
+    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+                    "Supplementary Table S1 describes parameter values used to generate these projections in detail."
+    ), 
+    fill = "Model",
+    caption  = glue(
+      #"**\uA9 COV-IND-19 Study Group**<br>",
+      "**Data Source:** covid19india.org<br>",
+      "**Note:**<br>",
+      " - We do not include projections from the baseline and SAPHIRE models as they do not yield active case count projections.<br>",
+      " - We do not include projections from the ICM model it yields only total (reported + unreported) case counts."
+    )
+  ) +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 14),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 0, vjust = 0.5)
+  )
+
+ggsave(paste0(save.address, "arc_box.pdf"), 
+       plot = arc,
+       device = cairo_pdf(), 
+       width = 16, 
+       height = 2*16/3, 
+       units = "in", 
+       dpi = 300)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+crc <- bl %>% 
+  select(date, bl.crc.width) %>% 
+  add_column(es %>% 
+               select(esir.crc.width)) %>% 
+  add_column(sp %>% 
+               mutate(sap.crc.width = sap.crc.high - sap.crc.low) %>% 
+               select(sap.crc.width)) %>% 
+  add_column(sf %>% 
+               select(seirf.crc.width)) %>%
+  rename(Baseline = bl.crc.width, 
+         eSIR = esir.crc.width, 
+         SAPHIRE = sap.crc.width,
+         `SEIR-fansy` = seirf.crc.width) %>% 
+  pivot_longer(cols = -date) %>% 
+  ggplot(aes(x = value/(10^6), y = name)) + 
+  geom_boxplot(aes(fill = name)) + 
+  ggsci::scale_fill_nejm() +
+  xlab(TeX("Width of confidence interval for cumulative case projections $\\left(\\times 10^6 \\right)$")) + 
+  ylab(TeX("Model")) + 
+  labs(
+    title    = "Boxplots showing width of confidence interval associated with projected cumulative cases from October 16 to December 31, 2020.",
+    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+                    "Supplementary Table S1 describes parameter values used to generate these projections in detail."
+    ), 
+    fill = "Model",
+    caption  = glue(
+      #"**\uA9 COV-IND-19 Study Group**<br>",
+      "**Data Source:** covid19india.org<br>",
+      "**Note:**<br>",
+      " - We do not include projections from the ICM model it yields only total (reported + unreported) case counts."
+    )
+  ) +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 14),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 0, vjust = 0.5)
+  )
+
+ggsave(paste0(save.address, "crc_box.pdf"), 
+       plot = crc,
+       device = cairo_pdf(), 
+       width = 16, 
+       height = 2*16/3, 
+       units = "in", 
+       dpi = 300)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+crd <-  es %>% 
+  select(date, esir.crd.width) %>% 
+  add_column(sf %>% 
+               mutate(seirf.crd.width = seirf.crd.high - seirf.crd.low) %>% 
+               select(seirf.crd.width)) %>% 
+  rename(eSIR = esir.crd.width, 
+         `SEIR-fansy` = seirf.crd.width) %>% 
+  pivot_longer(cols = -date) %>% 
+  ggplot(aes(x = value/(10^3), y = name)) + 
+  geom_boxplot(aes(fill = name)) + 
+  ggsci::scale_fill_nejm() +
+  xlab(TeX("Width of confidence interval for cumulative death projections $\\left(\\times 10^3 \\right)$")) + 
+  ylab(TeX("Model")) + 
+  labs(
+    title    = "Boxplots showing width of confidence interval associated with projected cumulative deaths from October 16 to December 31, 2020.",
+    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+                    "Supplementary Table S1 describes parameter values used to generate these projections in detail."
+    ), 
+    fill = "Model",
+    caption  = glue(
+      #"**\uA9 COV-IND-19 Study Group**<br>",
+      "**Data Source:** covid19india.org<br>",
+      "**Note:**<br>",
+      " - We do not include projections from the baseline and SAPHIRE models as they do not yield cumulative death counts.<br>",
+      " - We do not include projections from the ICM model it yields only total (reported + unreported) case counts."
+    )
+  ) +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 14),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 0, vjust = 0.5)
+  )
+
+ggsave(paste0(save.address, "crd_box.pdf"), 
+       plot = crc,
+       device = cairo_pdf(), 
+       width = 16, 
+       height = 2*16/3, 
+       units = "in", 
+       dpi = 300)
+dev.off()
+
+
+
+arc <- es %>% 
+  select(date, esir.arc.width) %>% 
+  add_column(sf %>% 
+               mutate(seirf.arc.width = seirf.arc.high - seirf.arc.low) %>% 
+               select(seirf.arc.width)) %>% 
+  rename(eSIR = esir.arc.width, 
+         `SEIR-fansy` = seirf.arc.width) %>% 
+  pivot_longer(cols = -date) %>% 
+  ggplot(aes(y = value/(10^6), x = name)) + 
+  geom_boxplot(aes(fill = name)) + 
+  ggsci::scale_fill_nejm() +
+  ylab(TeX("Width of confidence interval for active case projections $\\left(\\times 10^6 \\right)$")) + 
+  xlab(TeX("Model")) + 
+  labs(fill = "") + 
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 12),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 0, vjust = 0.5)
+  )
+
+
+crc <- bl %>% 
+  select(date, bl.crc.width) %>% 
+  add_column(es %>% 
+               select(esir.crc.width)) %>% 
+  add_column(sp %>% 
+               mutate(sap.crc.width = sap.crc.high - sap.crc.low) %>% 
+               select(sap.crc.width)) %>% 
+  add_column(sf %>% 
+               select(seirf.crc.width)) %>%
+  rename(Baseline = bl.crc.width, 
+         eSIR = esir.crc.width, 
+         SAPHIRE = sap.crc.width,
+         `SEIR-fansy` = seirf.crc.width) %>% 
+  pivot_longer(cols = -date) %>% 
+  ggplot(aes(y = value/(10^6), x = name)) + 
+  geom_boxplot(aes(fill = name)) + 
+  ggsci::scale_fill_nejm() +
+  ylab(TeX("Width of confidence interval for cumulative case projections $\\left(\\times 10^6 \\right)$")) + 
+  xlab(TeX("Model")) + 
+  labs(fill = "") +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 12),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 0, vjust = 0.5)
+  )
+
+
+crd <- es %>% 
+  select(date, esir.crd.width) %>% 
+  add_column(sf %>% 
+               mutate(seirf.crd.width = seirf.crd.high - seirf.crd.low) %>% 
+               select(seirf.crd.width)) %>% 
+  rename(eSIR = esir.crd.width, 
+         `SEIR-fansy` = seirf.crd.width) %>% 
+  pivot_longer(cols = -date) %>% 
+  ggplot(aes(y = value/(10^3), x = name)) + 
+  geom_boxplot(aes(fill = name)) + 
+  ggsci::scale_fill_nejm() +
+  ylab(TeX("Width of confidence interval for cumulative death projections $\\left(\\times 10^3 \\right)$")) + 
+  xlab(TeX("Model")) + 
+  labs(fill = "") +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 12),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 0, vjust = 0.5)
+  )
+
+
+bp <- ggpubr::ggarrange(arc, crc, crd, ncol = 3,  
+                        legend = "bottom")  +
+  ggtitle("Boxplots of  width of confidence intervals associated with projected active  cases (L), cumulative cases (C) and cumulative deaths (R).")  + 
+  labs(subtitle = glue("Projections are from October 16 to December 31, 2020, based on training data for India from March 15 to October 15, 2020.\n",
+                       "Supplementary Table S1 describes parameter values used to generate these projections in detail."),
+       color = "Model",
+       caption  = glue(
+         #"**\uA9 COV-IND-19 Study Group**<br>",
+         "**Data Source:** covid19india.org<br>",
+         "**Note:**<br>",
+         " - We do not include projections from the ICM model it yields only total (reported + unreported) counts.")
+  ) +
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
+    plot.subtitle      = element_text(size = 14, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1),
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 14),
+    legend.title = ggtext::element_markdown(size = 14),
+    legend.text = ggtext::element_markdown(size = 12),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
+
+
+
+ggsave(paste0(save.address, "box.pdf"), 
+       plot = bp,
+       device = cairo_pdf(), 
+       width = 16, 
+       height = 2*16/3, 
+       units = "in", 
+       dpi = 300)
+dev.off()
+
+
+

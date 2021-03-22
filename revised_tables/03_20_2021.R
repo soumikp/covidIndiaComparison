@@ -59,3 +59,16 @@ metrics2(obs$total.death, es$esir.crd.estim, sf$seirf.crd.estim)
 
 
 
+### table 4
+dates <- as_datetime(c("2020-10-31", "2020-11-30", "2020-12-31"))
+obs %>% 
+  select(Date, active.case) %>% 
+  filter(Date %in%  dates) %>% 
+  rename(obs = active.case) %>% 
+  add_column(sf %>% filter(date %in% dates) %>% select(contains("atc"))) %>%
+  mutate(text = paste0(round(seirf.atc.estim/10^6, 2), 
+                       " (", round(seirf.atc.low/10^6, 2), "-", 
+                       round(seirf.atc.high/10^6, 2), ") [",
+                       round(seirf.atc.estim/obs, 2), "]"))
+
+
