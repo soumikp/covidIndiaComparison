@@ -57,7 +57,7 @@ metrics2(obs$total.case, bl$bl.crc.estim, sf$seirf.crc.estim)
 
 metrics2(obs$total.death, es$esir.crd.estim, es$esir.crd.estim)
 metrics2(obs$total.death, es$esir.crd.estim, sf$seirf.crd.estim)
-
+metrics2(obs$total.death, es$esir.crd.estim, icm$icm.ctd.estim)
 
 
 

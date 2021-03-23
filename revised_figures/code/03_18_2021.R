@@ -148,14 +148,16 @@ ggsave(paste0(save.address, "crc.pdf"),
 
 
 #### figure for cumulative reported deaths ####
-crd.estim <- full_join(full_join(obs %>% select(date, total.death),
+crd.estim <- full_join(full_join(full_join(obs %>% select(Date, total.death) %>% rename(date = Date),
                                  es %>% select(date, esir.crd.estim)),
-                       sf %>% select(date, seirf.crd.estim))
+                       sf %>% select(date, seirf.crd.estim)), 
+                       icm %>% select(date, icm.ctd.estim))
 crd <- crd.estim %>% 
   pivot_longer(cols = -date) %>% 
   mutate(date = as_date(date)) %>% 
   mutate(name = ifelse(name == "total.death", "Observed", 
-                       ifelse(name == "esir.crd.estim", "eSIR", "SEIR-fansy"))) %>% 
+                       ifelse(name == "esir.crd.estim", "eSIR",
+                              ifelse(name == "icm.ctd.estim", "ICM", "SEIR-fansy")))) %>% 
   mutate(value = value/1000) %>%  
   ggplot(aes(x = date, y = value, color = name)) + 
   geom_line(size = 1) + 
@@ -173,8 +175,7 @@ crd <- crd.estim %>%
       #"**\uA9 COV-IND-19 Study Group**<br>",
       "**Data Source:** covid19india.org<br>",
       "**Note:**<br>",
-      " - We do not include projections from the baseline and SAPHIRE models as they do not yield cumulative death counts.<br>",
-      " - We do not include projections from the ICM model it yields only total (reported + unreported) death counts."
+      " - We do not include projections from the baseline and SAPHIRE models as they do not yield cumulative death counts.<br>"
     )
   ) +
   theme_bw() +
@@ -373,7 +374,8 @@ dev.off()
 scatter <- crd.estim %>% 
   pivot_longer(cols = -c(date, total.death)) %>% 
   mutate(date = as_date(date)) %>% 
-  mutate(name = ifelse(name == "esir.crd.estim", "eSIR", "SEIR-fansy")) %>% 
+  mutate(name = ifelse(name == "esir.crd.estim", "eSIR", 
+                       ifelse(name == "icm.ctd.estim", "ICM", "SEIR-fansy"))) %>% 
   rename(Observed = total.death, 
          Projected = value) %>% 
   mutate(Observed = Observed/1000, 
@@ -388,10 +390,10 @@ scatter <- crd.estim %>%
   geom_abline(slope = 1, intercept = 0)
 
 density <- crd.estim %>% 
-  pivot_longer(cols = -c(date)) %>% 
+  pivot_longer(cols = -c(date, total.death)) %>% 
   mutate(date = as_date(date)) %>% 
-  mutate(name = ifelse(name == "esir.crd.estim", "eSIR",
-                       ifelse(name == "total.death", "Observed", "SEIR-fansy"))) %>% 
+  mutate(name = ifelse(name == "esir.crd.estim", "eSIR", 
+                       ifelse(name == "icm.ctd.estim", "ICM", "SEIR-fansy"))) %>% 
   rename(Model= name, 
          Cases = value) %>% 
   mutate(Cases = Cases/1000) %>% 
@@ -413,8 +415,7 @@ crd.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,
          "**Data Source:** covid19india.org<br>",
          "**Note:**<br>",
          " - Solid black line on scatterplot (R) indicates y = x line.<br>",
-         " - We do not include projections from the baseline and SAPHIRE models as they do not yield cumulative death counts.<br>",
-         " - We do not include projections from the ICM model it yields only total (reported + unreported) death counts."
+         " - We do not include projections from the baseline and SAPHIRE models as they do not yield cumulative death counts.<br>"
        )
   ) +
   theme_bw() +
@@ -603,8 +604,10 @@ crd <-  es %>%
   add_column(sf %>% 
                mutate(seirf.crd.width = seirf.crd.high - seirf.crd.low) %>% 
                select(seirf.crd.width)) %>% 
+  add_column(icm %>% select(icm.ctd.width)) %>% 
   rename(eSIR = esir.crd.width, 
-         `SEIR-fansy` = seirf.crd.width) %>% 
+         `SEIR-fansy` = seirf.crd.width, 
+         ICM = icm.ctd.width) %>% 
   pivot_longer(cols = -date) %>% 
   ggplot(aes(x = value/(10^3), y = name)) + 
   geom_boxplot(aes(fill = name)) + 
@@ -665,7 +668,7 @@ arc <- es %>%
   ggplot(aes(y = value/(10^6), x = name)) + 
   geom_boxplot(aes(fill = name)) + 
   ggsci::scale_fill_nejm() +
-  ylab(TeX("Width of confidence interval for active case projections $\\left(\\times 10^6 \\right)$")) + 
+  ylab(TeX("Width of 95% credible interval for active case projections $\\left(\\times 10^6 \\right)$")) + 
   xlab(TeX("Model")) + 
   labs(fill = "") + 
   theme_bw() +
@@ -704,7 +707,7 @@ crc <- bl %>%
   ggplot(aes(y = value/(10^6), x = name)) + 
   geom_boxplot(aes(fill = name)) + 
   ggsci::scale_fill_nejm() +
-  ylab(TeX("Width of confidence interval for cumulative case projections $\\left(\\times 10^6 \\right)$")) + 
+  ylab(TeX("Width of 95% credible interval for cumulative case projections $\\left(\\times 10^6 \\right)$")) + 
   xlab(TeX("Model")) + 
   labs(fill = "") +
   theme_bw() +
@@ -731,13 +734,15 @@ crd <- es %>%
   add_column(sf %>% 
                mutate(seirf.crd.width = seirf.crd.high - seirf.crd.low) %>% 
                select(seirf.crd.width)) %>% 
+  add_column(icm %>% select(icm.ctd.width)) %>% 
   rename(eSIR = esir.crd.width, 
-         `SEIR-fansy` = seirf.crd.width) %>% 
+         `SEIR-fansy` = seirf.crd.width, 
+         ICM = icm.ctd.width) %>% 
   pivot_longer(cols = -date) %>% 
   ggplot(aes(y = value/(10^3), x = name)) + 
   geom_boxplot(aes(fill = name)) + 
   ggsci::scale_fill_nejm() +
-  ylab(TeX("Width of confidence interval for cumulative death projections $\\left(\\times 10^3 \\right)$")) + 
+  ylab(TeX("Width of 95% credible interval for cumulative death projections $\\left(\\times 10^3 \\right)$")) + 
   xlab(TeX("Model")) + 
   labs(fill = "") +
   theme_bw() +
@@ -761,7 +766,7 @@ crd <- es %>%
 
 bp <- ggpubr::ggarrange(arc, crc, crd, ncol = 3,  
                         legend = "bottom")  +
-  ggtitle("Boxplots of  width of confidence intervals associated with projected active  cases (L), cumulative cases (C) and cumulative deaths (R).")  + 
+  ggtitle("Boxplots of  width of 95% credible intervals associated with projected active  cases (L), cumulative cases (C) and cumulative deaths (R).")  + 
   labs(subtitle = glue("Projections are from October 16 to December 31, 2020, based on training data for India from March 15 to October 15, 2020.\n",
                        "Supplementary Table S1 describes parameter values used to generate these projections in detail."),
        color = "Model",
@@ -769,7 +774,8 @@ bp <- ggpubr::ggarrange(arc, crc, crd, ncol = 3,
          #"**\uA9 COV-IND-19 Study Group**<br>",
          "**Data Source:** covid19india.org<br>",
          "**Note:**<br>",
-         " - We do not include projections from the ICM model it yields only total (reported + unreported) counts.")
+         " - We do not include active case or cumulative death projections from the baseline or SAPHIRE as those projections are not available.<br>",
+         " - We do not include active or cumulative case projections from the ICM model it yields only total (reported + unreported) case counts.")
   ) +
   theme_bw() +
   theme(
