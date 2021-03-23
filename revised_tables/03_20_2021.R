@@ -37,7 +37,9 @@ metrics(sp$sap.crc.estim, obs$total.case) #only total for SAPHIRE
 metrics(sf$seirf.arc.estim, obs$active.case) #ll three for SEIRF
 metrics(sf$seirf.crc.estim, obs$total.case)
 metrics(sf$seirf.crd.estim, obs$total.death)
-##nothing for ICM
+
+metrics(icm$icm.ctc.estim, obs$total.case)
+metrics(icm$icm.ctd.estim, obs$total.death)##nothing for ICM
 
 
 ## table 3 
