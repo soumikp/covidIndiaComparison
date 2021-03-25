@@ -74,3 +74,32 @@ obs %>%
                        round(seirf.atc.estim/obs, 2), "]"))
 
 
+
+obs %>% 
+  select(Date, total.case) %>% 
+  filter(Date %in%  dates) %>% 
+  rename(obs = total.case) %>% 
+  add_column(bl %>% filter(date %in% dates) %>% select(contains("crc"))) %>% 
+  mutate(text = paste0(round(bl.crc.estim/10^6, 2), 
+                       " (", round(bl.crc.low/10^6, 2), "-", 
+                       round(bl.crc.high/10^6, 2), ")"))
+
+
+
+  # add_column(sf %>% filter(date %in% dates) %>% select(contains("atc"))) %>%
+  # mutate(text = paste0(round(seirf.atc.estim/10^6, 2), 
+  #                      " (", round(seirf.atc.low/10^6, 2), "-", 
+  #                      round(seirf.atc.high/10^6, 2), ") [",
+  #                      round(seirf.atc.estim/obs, 2), "]"))
+
+obs %>% 
+  select(Date, total.case) %>% 
+  filter(Date %in%  dates) %>% 
+  rename(obs = total.case) %>% 
+  add_column(sf %>% filter(date %in% dates) %>% select(contains("crc"))) %>% 
+  mutate(text = paste0(round(seirf.crc.estim/10^6, 2), 
+                       " (", round(seirf.crc.low/10^6, 2), "-", 
+                       round(seirf.crc.high/10^6, 2), ")"))
+
+
+
