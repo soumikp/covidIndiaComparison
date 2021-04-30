@@ -11,18 +11,18 @@ save.address <- "/Users/soumikp/Box/COVID India Comparisons/Revisions/covidIndia
 
 
 obs <- read_csv(paste0(address, "observed.csv")) %>% 
-  filter(Date >= "2020-10-15" & Date <= "2020-12-31") %>% 
+  filter(Date >= "2020-10-18" & Date <= "2020-12-31") %>% 
   rename(date = Date) 
 bl <- read_csv(paste0(address, "baseline.csv")) %>% 
-  filter(date >= "2020-10-15" & date <= "2020-12-31")
+  filter(date >= "2020-10-18" & date <= "2020-12-31")
 es <- read_csv(paste0(address, "esir.csv")) %>% 
-  filter(date >= "2020-10-15" & date <= "2020-12-31")
+  filter(date >= "2020-10-18" & date <= "2020-12-31")
 sp <- read_csv(paste0(address, "saphire.csv")) %>% 
-  filter(date >= "2020-10-15" & date <= "2020-12-31")
+  filter(date >= "2020-10-18" & date <= "2020-12-31")
 sf <- read_csv(paste0(address, "seirfansy.csv")) %>% 
-  filter(date >= "2020-10-15" & date <= "2020-12-31")
+  filter(date >= "2020-10-18" & date <= "2020-12-31")
 icm <- read_csv(paste0(address, "icm.csv")) %>% 
-  filter(date >= "2020-10-15" & date <= "2020-12-31")
+  filter(date >= "2020-10-18" & date <= "2020-12-31")
 
 #### figure for active reported cases ####
 arc.estim <- full_join(full_join(obs %>% 
@@ -43,7 +43,7 @@ arc <- arc.estim %>%
   scale_color_nejm() + 
   labs(
     title    = "Time series plot of projected and observed active reported cases from October 16 to December 31, 2020.",
-    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+    subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                     "Supplementary Table S1 describes parameter values used to generate these projections in detail."
     ), 
     x        = "Date",
@@ -60,13 +60,13 @@ arc <- arc.estim %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
-    axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -106,7 +106,7 @@ crc.estim %>%
   scale_color_nejm() + 
   labs(
     title    = "Time series plot of projected and observed cumulative reported cases from October 16 to December 31, 2020.",
-    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+    subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                     "Supplementary Table S1 describes parameter values used to generate these projections in detail."
     ), 
     x        = "Date",
@@ -122,13 +122,13 @@ crc.estim %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
-    axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -148,7 +148,7 @@ ggsave(paste0(save.address, "crc.pdf"),
 
 
 #### figure for cumulative reported deaths ####
-crd.estim <- full_join(full_join(full_join(obs %>% select(Date, total.death) %>% rename(date = Date),
+crd.estim <- full_join(full_join(full_join(obs %>% select(date, total.death) %>% rename(date = date),
                                  es %>% select(date, esir.crd.estim)),
                        sf %>% select(date, seirf.crd.estim)), 
                        icm %>% select(date, icm.ctd.estim))
@@ -165,7 +165,7 @@ crd <- crd.estim %>%
   scale_color_nejm() + 
   labs(
     title    = "Time series plot of projected and observed cumulative reported deaths from October 16 to December 31, 2020.",
-    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+    subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                     "Supplementary Table S1 describes parameter values used to generate these projections in detail."
     ), 
     x        = "Date",
@@ -181,13 +181,13 @@ crd <- crd.estim %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
-    axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -224,7 +224,23 @@ scatter <- arc.estim %>%
   ylab(TeX("Projected cases $\\left( \\times 10^6 \\right)$")) + 
   theme_bw() + 
   labs(color = "Model") + 
-  geom_abline(slope = 1, intercept = 0)
+  geom_abline(slope = 1, intercept = 0) +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
 
 density <- arc.estim %>% 
   pivot_longer(cols = -c(date)) %>% 
@@ -238,12 +254,28 @@ density <- arc.estim %>%
   geom_density_ridges(alpha = 0.75) + 
   scale_fill_nejm() +
   xlab(TeX("Cases $\\left( \\times 10^6 \\right)$")) + 
-  theme_bw()
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
 
 arc.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,  
                                   legend = "bottom")  +
   labs(title = "Densities (L) and scatterplot (R) of projected and observed active reported cases from October 16 to December 31, 2020.",
-       subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+       subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                        "Supplementary Table S1 describes parameter values used to generate these projections in detail."
        ),
        color = "Model",
@@ -259,13 +291,13 @@ arc.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1),
-    axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -304,7 +336,24 @@ scatter <- crc.estim %>%
   ylab(TeX("Projected cases $\\left( \\times 10^6 \\right)$")) + 
   theme_bw() + 
   labs(color = "Model") + 
-  geom_abline(slope = 1, intercept = 0)
+  geom_abline(slope = 1, intercept = 0) +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
+
 
 density <- crc.estim %>% 
   pivot_longer(cols = -c(date)) %>% 
@@ -320,12 +369,29 @@ density <- crc.estim %>%
   geom_density_ridges(alpha = 0.75) + 
   scale_fill_nejm() +
   xlab(TeX("Cases $\\left( \\times 10^6 \\right)$")) + 
-  theme_bw()
+  theme_bw() +
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
+
 
 crc.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,  
                                   legend = "bottom")  +
   labs(title = "Densities (L) and scatterplot (R) of projected and observed cumulative reported cases from October 16 to December 31, 2020.",
-       subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+       subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                        "Supplementary Table S1 describes parameter values used to generate these projections in detail."
        ),
        color = "Model",
@@ -341,13 +407,13 @@ crc.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -387,7 +453,23 @@ scatter <- crd.estim %>%
   ylab(TeX("Projected deaths $\\left( \\times 10^3 \\right)$")) + 
   theme_bw() + 
   labs(color = "Model") + 
-  geom_abline(slope = 1, intercept = 0)
+  geom_abline(slope = 1, intercept = 0)+
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
 
 density <- crd.estim %>% 
   pivot_longer(cols = -c(date, total.death)) %>% 
@@ -401,12 +483,28 @@ density <- crd.estim %>%
   geom_density_ridges(alpha = 0.75) + 
   scale_fill_nejm() +
   xlab(TeX("Deaths $\\left( \\times 10^3 \\right)$")) + 
-  theme_bw()
+  theme_bw()+
+  theme(
+    #text               = element_text(family = "Helvetica Neue"),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
+    axis.text          = element_text(size = 10, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
+    legend.position    = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 60, vjust = 0.5)
+  )
 
 crd.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,  
                                   legend = "bottom")  +
   labs(title = "Densities (L) and scatterplot (R) of projected and observed cumulative reported deaths from October 16 to December 31, 2020.",
-       subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+       subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                        "Supplementary Table S1 describes parameter values used to generate these projections in detail."
        ),
        color = "Model",
@@ -421,13 +519,13 @@ crd.scatDens <- ggpubr::ggarrange(density, scatter, ncol = 2,
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -467,7 +565,7 @@ arc <- es %>%
   ylab(TeX("Model")) + 
   labs(
     title    = "Boxplots showing width of confidence interval associated with projected active cases from October 16 to December 31, 2020.",
-    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+    subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                     "Supplementary Table S1 describes parameter values used to generate these projections in detail."
     ), 
     fill = "Model",
@@ -482,13 +580,13 @@ arc <- es %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
-    axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
+    axis.text          = element_text(size = 16, color = "#36454f"),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -550,7 +648,7 @@ crc <- bl %>%
   ylab(TeX("Model")) + 
   labs(
     title    = "Boxplots showing width of confidence interval associated with projected cumulative cases from October 16 to December 31, 2020.",
-    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+    subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                     "Supplementary Table S1 describes parameter values used to generate these projections in detail."
     ), 
     fill = "Model",
@@ -564,13 +662,13 @@ crc <- bl %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -616,7 +714,7 @@ crd <-  es %>%
   ylab(TeX("Model")) + 
   labs(
     title    = "Boxplots showing width of confidence interval associated with projected cumulative deaths from October 16 to December 31, 2020.",
-    subtitle = glue("Projections are based on training data for India from March 15 to October 15, 2020.\n",
+    subtitle = glue("Projections are based on training data for India from March 18 to October 18, 2020.\n",
                     "Supplementary Table S1 describes parameter values used to generate these projections in detail."
     ), 
     fill = "Model",
@@ -631,13 +729,13 @@ crd <-  es %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
-    legend.text = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
+    legend.text = ggtext::element_markdown(size = 16),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -674,12 +772,12 @@ arc <- es %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
     legend.text = ggtext::element_markdown(size = 12),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
@@ -713,12 +811,12 @@ crc <- bl %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
     legend.text = ggtext::element_markdown(size = 12),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
@@ -748,12 +846,12 @@ crd <- es %>%
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1), 
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1), 
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
     legend.text = ggtext::element_markdown(size = 12),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
@@ -767,7 +865,7 @@ crd <- es %>%
 bp <- ggpubr::ggarrange(arc, crc, crd, ncol = 3,  
                         legend = "bottom")  +
   ggtitle("Boxplots of  width of 95% credible intervals associated with projected active  cases (L), cumulative cases (C) and cumulative deaths (R).")  + 
-  labs(subtitle = glue("Projections are from October 16 to December 31, 2020, based on training data for India from March 15 to October 15, 2020.\n",
+  labs(subtitle = glue("Projections are from October 16 to December 31, 2020, based on training data for India from March 18 to October 18, 2020.\n",
                        "Supplementary Table S1 describes parameter values used to generate these projections in detail."),
        color = "Model",
        caption  = glue(
@@ -780,12 +878,12 @@ bp <- ggpubr::ggarrange(arc, crc, crd, ncol = 3,
   theme_bw() +
   theme(
     #text               = element_text(family = "Helvetica Neue"),
-    plot.title         = ggtext::element_markdown(size = 15, face = "bold"),
-    plot.subtitle      = element_text(size = 14, color = "#36454f"),
-    plot.caption       = ggtext::element_markdown(hjust = 0,size = 14, lineheight = 1.1),
+    plot.title         = ggtext::element_markdown(size = 18, face = "bold"),
+    plot.subtitle      = element_text(size = 16, color = "#36454f"),
+    plot.caption       = ggtext::element_markdown(hjust = 0,size = 16, lineheight = 1.1),
     axis.text          = element_text(size = 10, color = "#36454f"),
-    axis.title         = element_text(size = 14),
-    legend.title = ggtext::element_markdown(size = 14),
+    axis.title         = element_text(size = 16),
+    legend.title = ggtext::element_markdown(size = 16),
     legend.text = ggtext::element_markdown(size = 12),
     legend.position    = "bottom",
     panel.grid.major.x = element_blank(),
